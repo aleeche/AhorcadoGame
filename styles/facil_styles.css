@@ -1,0 +1,252 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fondo y tipografía */
+body {
+    font-family: Arial, sans-serif;
+    background: url("../img/campoDos.jpg") no-repeat center center fixed;
+    background-size: cover;
+    color: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Contenedor principal */
+.container {
+    text-align: center;
+    background-color: rgba(255, 251, 251, 0.9);
+    padding: 15px; 
+    border-radius: 10px;
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.6);
+    max-width: 700px;
+    width: 95%;
+    
+}
+
+/* Título */
+.container h1 {
+    margin-bottom: 15px;
+    color: #4d9e01;
+    font-size: 1.3rem; 
+    font-family: 'Press Start 2P';
+}
+
+/* Sección principal con dos columnas */
+.main-section {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    gap: 15px;
+}
+
+/* Canvas del ahorcado */
+#personCanvas {
+    border: 2px solid #f7a714;
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 5px;
+    width: 220px;   
+    height: 220px;  
+}
+
+/* Caja de letras usadas */
+.used-letters-box {
+    border: 2px solid #f7a714;
+    border-radius: 8px;
+    padding: 10px;
+    width: 160px;  
+    min-height: 100px;
+    background: #f9fafb;
+    text-align: left;
+    font-size: 0.8rem;
+}
+
+.used-letters-box h3 {
+    margin-bottom: 8px;
+    color: #4d9e01;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+#usedLetters {
+    font-size: 0.9rem;
+    font-weight: bold;
+    /*color: #ef4444;*/
+    color: black;
+}
+
+/* Palabra oculta */
+.word-container {
+    font-size: 1.3rem; 
+    letter-spacing: 6px;
+    margin: 15px 0;
+    font-weight: bold;
+    color: black;
+}
+
+/* Teclado virtual */
+.keyboard {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 6px;
+    margin: 15px 0;
+    justify-content: center;
+}
+
+.keyboard button {
+    padding: 6px; 
+    border-color: black;
+    border-radius: 16px;
+    background: #f7a714;
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.keyboard button:hover {
+    background: #9f6d10;
+}
+
+.keyboard button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Probar palabra completa */
+.guess-section {
+    margin: 15px 0;
+}
+
+.guess-section input {
+    padding: 5px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    border: 2px solid #f7a714;
+    margin-right: 8px;
+    width: 200px;
+    text-align: center;
+}
+
+.guess-section button {
+    padding: 6px 10px;
+    background: #4d9e01;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+
+.guess-section button:hover {
+    background: #346a01;
+}
+
+/* Mensaje de resultado */
+.message {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 10px;
+    color: black;
+}
+/*Clase*/
+
+/* Botón reiniciar */
+#restartButton {
+    margin-top: 12px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    background: #f97316;
+    color: white;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#restartButton:hover {
+    background: #ea580c;
+    transform: scale(1.05);
+}
+/*Selecciona el elemento que el id es restartButton*/
+
+
+/* Botón de volver al menú */
+a button {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-left: 8px;
+}
+
+a button:hover {
+    background-color: #1d4ed8;
+    transform: scale(1.05);
+}
+
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+/*.particles es un contenedor general que cubre toda la pantalla.
+position: fixed -> Se mantiene en la pantalla aunque el usuario haga scroll.
+width y height: 100% -> Ocupa toda la ventana.
+pointer-events: none -> Las partículas no interfieren con clicks o interacciones.
+z-index: -1 -> Queda detrás de otros elementos visibles del juego.*/
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: float 6s infinite linear;
+}
+/*.particle representa cada confeti individual.
+position: absolute  Se posiciona libremente dentro del contenedor .particles.
+width y height: 4px  Tamaño pequeño para que se vea como confeti fino.
+background: rgba(255, 255, 255, 0.8) → Color blanco semi-transparente.
+border-radius: 50%  Hace que la partícula sea circular.
+animation: float 6s infinite linear  Aplica la animación llamada float, dura 6 segundos, se repite infinitamente y tiene movimiento constante.*/
+
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+/*Define el movimiento y efecto visual de cada confeti.
+0%  Comienza fuera de la pantalla abajo (translateY(100vh)), sin rotación y completamente transparente.
+10%  Partícula empieza a ser visible (opacity: 1).
+90%  Mantiene la visibilidad mientras cae.
+100%  Termina fuera de la pantalla arriba (translateY(-10vh)), rotando 360 grados y desapareciendo (opacity: 0).*/

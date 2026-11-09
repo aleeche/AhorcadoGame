@@ -10,6 +10,52 @@ body,html {
     height: 100%; 
 }
 
+/* Pantalla de carga */
+.pantalla-carga {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    background: #14141f;
+    color: #fff;
+    transition: opacity 0.4s ease;
+}
+
+.pantalla-carga.oculta {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pantalla-carga p {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+}
+
+.spinner {
+    width: 56px;
+    height: 56px;
+    border: 6px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #ffcc00;
+    border-radius: 50%;
+    animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* Oculta el menú a medio cargar mientras dure la pantalla de carga */
+body.cargando { overflow: hidden; }
+body.cargando .contenedor { visibility: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+    .spinner { animation-duration: 2s; }
+}
+
 /* Contenedor principal */
 .contenedor {
     margin: 0 auto;

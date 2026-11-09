@@ -44,7 +44,14 @@
         }
     </script>
 </head>
-<body onclick="PlayAudioFondo()">
+<body onclick="PlayAudioFondo()" class="cargando">
+    <!-- Pantalla de carga: se oculta cuando las imágenes del menú ya están listas -->
+    <div id="pantallaCarga" class="pantalla-carga" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Cargando…</p>
+    </div>
+    <noscript><style>.pantalla-carga { display: none !important; } body.cargando .contenedor { visibility: visible !important; }</style></noscript>
+
     <div class="contenedor">
         <div class="info">
             <h1 class="titulo-informacion">Juego del Ahorcado</h1>
@@ -107,6 +114,40 @@
         </div>
     </div>
     <footer class="pie"></footer>
+
+    <script>
+        // ---- Pantalla de carga: espera a que las imágenes del menú estén descargadas ----
+        (function () {
+            const pantalla = document.getElementById("pantallaCarga");
+            const imagenes = [
+                "img/fondo34.png",
+                "img/campoDos.jpg",
+                "img/cielo2.jpg",
+                "img/espacio2.jpg"
+            ];
+            let terminado = false;
+
+            function ocultar() {
+                if (terminado) return;
+                terminado = true;
+                document.body.classList.remove("cargando");
+                pantalla.classList.add("oculta");
+                setTimeout(() => pantalla.remove(), 500);
+            }
+
+            const cargas = imagenes.map((src) => new Promise((resolve) => {
+                const img = new Image();
+                img.onload = img.onerror = resolve; // si una falla, no bloqueamos el menú
+                img.src = src;
+            }));
+            const fuentes = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+
+            Promise.all([...cargas, fuentes]).then(ocultar);
+            setTimeout(ocultar, 8000); // seguro: nunca dejar al usuario atrapado en la carga
+            // Al volver con "atrás" desde caché, no mostrar la carga otra vez.
+            window.addEventListener("pageshow", ocultar);
+        })();
+    </script>
 
     <script>
         (function () {

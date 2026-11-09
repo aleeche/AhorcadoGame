@@ -39,7 +39,8 @@ AhorcadoGame/
 │   ├── facil_styles.css        # Estilos del nivel fácil
 │   ├── medio_styles.css        # Estilos del nivel medio
 │   ├── dificl_styles.css       # Estilos del nivel difícil
-│   └── secreto_styles.css      # Estilos del nivel secreto
+│   ├── secreto_styles.css      # Estilos del nivel secreto
+│   └── responsive.css          # Ajustes para tablets y celulares (niveles)
 ├── audio/                      # Música de fondo y efectos de sonido
 └── img/                        # Fondos, logotipos e íconos
 ```
@@ -99,7 +100,7 @@ Nota: muchos navegadores bloquean la reproducción automática de audio hasta qu
 
 ## Compatibilidad
 
-El juego funciona en navegadores modernos de escritorio con soporte para HTML5 Canvas y la etiqueta `<audio>` (Chrome, Firefox, Edge). El diseño incluye la meta etiqueta `viewport` para adaptarse a distintos tamaños de pantalla.
+El juego funciona en navegadores modernos de escritorio con soporte para HTML5 Canvas y la etiqueta `<audio>` (Chrome, Firefox, Edge). El diseño es responsivo: se adapta a tablets y celulares (vertical y horizontal) con media queries en `styles/responsive.css` (niveles) y al final de `styles/styles.css` (menú), con botones táctiles de al menos 44px y teclado virtual de 7 columnas en celular.
 
 ## Licencia
 

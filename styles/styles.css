@@ -126,3 +126,396 @@ h2{
     color: red;
 }
 
+
+/* ==========================================================
+   Responsividad del menú principal
+   ========================================================== */
+button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.item-informacion a {
+    display: block;
+}
+
+/* Tablets y menores */
+@media (max-width: 1024px) {
+    html, body {
+        height: auto;
+        background-attachment: scroll; /* "fixed" falla en iOS/Android */
+    }
+
+    body {
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
+    .contenedor {
+        padding: 24px;
+    }
+
+    .niveles-container button {
+        width: 100%;
+        max-width: 320px;
+        min-height: 48px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+    .contenedor {
+        padding: 12px 8px;
+        max-width: 100vw;
+    }
+
+    .info {
+        padding: 14px;
+    }
+
+    .titulo-informacion {
+        font-size: 1.1rem;
+        line-height: 1.5;
+        padding: 8px;
+    }
+
+    .contenido-informacion {
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+}
+
+/* Celular en horizontal */
+@media (max-height: 500px) and (orientation: landscape) {
+    .contenedor {
+        padding: 8px;
+    }
+
+    .contenido-informacion {
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+    }
+}
+
+/* ==========================================================
+   Nivel secreto en pantallas táctiles (botón + modal)
+   ========================================================== */
+.btn-secreto {
+    display: none; /* solo táctil */
+    margin: 22px auto 0;
+    padding: 10px 22px;
+    min-height: 44px;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10, 0, 0, 0.8);
+    color: #b30000;
+    text-shadow: 0 0 8px rgba(255, 0, 0, 0.7);
+    border: 1px solid #5c0000;
+    border-radius: 999px;
+    font-family: 'Creepster', 'Chiller', cursive;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    animation: latido 2.4s ease-in-out infinite;
+}
+
+@media (pointer: coarse), (hover: none), (max-width: 1024px) {
+    .btn-secreto { display: inline-flex; }
+}
+
+.btn-secreto:active { transform: scale(0.95); }
+
+@keyframes latido {
+    0%, 100% { box-shadow: 0 0 4px rgba(255, 0, 0, 0.3); opacity: 0.7; }
+    50% { box-shadow: 0 0 16px rgba(255, 0, 0, 0.9); opacity: 1; }
+}
+
+.modal-secreto {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(4px);
+    animation: aparecer 0.25s ease-out;
+}
+
+.modal-secreto[hidden] { display: none; }
+
+@keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-caja {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    max-height: 98vh;
+    max-height: 98dvh;
+    overflow-y: auto;
+    padding: 20px 14px 16px;
+    text-align: center;
+    background: radial-gradient(circle at top, #4a0505, #150000 75%);
+    border: 2px solid #5c0000;
+    border-radius: 14px;
+    box-shadow: 0 0 30px rgba(195, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.8);
+    animation: entrar 0.35s cubic-bezier(.2, 1.4, .4, 1);
+}
+
+@keyframes entrar { from { transform: scale(0.8) translateY(30px); opacity: 0; } }
+
+.modal-cerrar {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    color: #c9b8b8;
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+
+/* Título: luz que falla */
+.glitch {
+    position: relative;
+    margin: 4px 30px 22px;
+    font-family: 'Creepster', 'Chiller', cursive;
+    font-weight: normal;
+    font-size: 2rem;
+    line-height: 1.1;
+    letter-spacing: 3px;
+    color: #b30000;
+    text-shadow: 0 0 10px #ff0000, 2px 2px 0 #1a0000;
+    animation: luz-falla 7s infinite;
+}
+
+@keyframes luz-falla {
+    0%, 100% { opacity: 1; }
+    4% { opacity: 0.15; }
+    6% { opacity: 1; }
+    8% { opacity: 0.4; }
+    10% { opacity: 1; }
+    55% { opacity: 1; }
+    57% { opacity: 0.05; }
+    58% { opacity: 0.9; }
+    60% { opacity: 0.2; }
+    62% { opacity: 1; }
+}
+
+.modal-pista {
+    margin: 0 8px 14px;
+    font-family: 'Special Elite', 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #c9a3a3;
+}
+
+/* Casillas de la contraseña */
+.slots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.slot {
+    width: 44px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #5c0000;
+    border-radius: 8px;
+    font-family: 'Creepster', 'Chiller', cursive;
+    font-size: 2rem;
+    color: #e8e0d0;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.slot.llena { border-color: #b30000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.6); animation: pop 0.15s ease-out; }
+.slot.activa { border-color: #c9b8b8; animation: parpadeo 1s infinite; }
+
+@keyframes pop { 50% { transform: scale(1.15); } }
+@keyframes parpadeo { 50% { border-color: #5c0000; } }
+
+.estado {
+    min-height: 1.4em;
+    margin: 8px 0 10px;
+    font-family: 'Creepster', 'Chiller', cursive;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: #b30000;
+    text-shadow: 0 0 8px rgba(255, 0, 0, 0.7);
+}
+
+/* Teclado A–Z */
+.teclado-secreto {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.teclado-secreto button {
+    min-height: 46px;
+    padding: 0;
+    background: #8b0000;
+    color: #e8e0d0;
+    border: 1px solid #000;
+    border-radius: 12px;
+    font-family: 'Creepster', 'Chiller', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.teclado-secreto button:hover { background: #2a0000; text-shadow: 0 0 6px #ff0000; }
+.teclado-secreto button:active { background: #2a0000; transform: scale(0.92); }
+
+.btn-borrar {
+    margin-top: 12px;
+    padding: 0 22px;
+    min-height: 44px;
+    background: transparent;
+    color: #c9b8b8;
+    border: 1px solid #5c0000;
+    border-radius: 10px;
+    font-family: 'Creepster', 'Chiller', cursive;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.btn-borrar:hover, .btn-borrar:active { background: #2a0000; color: #fff; text-shadow: 0 0 6px #ff0000; }
+
+/* Estados: error y éxito */
+.modal-caja.error { animation: temblor 0.5s; border-color: #ff0000; }
+.modal-caja.error .slot { border-color: #ff0000; background: rgba(255, 0, 0, 0.25); }
+
+@keyframes temblor {
+    0%, 100% { transform: translateX(0); }
+    15%, 45%, 75% { transform: translateX(-10px); }
+    30%, 60%, 90% { transform: translateX(10px); }
+}
+
+/* ACCESO CONCEDIDO: la luz se vuelve loca y la oscuridad se lo traga todo */
+.modal-secreto:has(.modal-caja.ok) {
+    background: #000;
+    transition: background 1.8s ease-in;
+}
+
+.modal-caja.ok {
+    border-color: #ff0000;
+    box-shadow: 0 0 60px rgba(255, 0, 0, 0.9), inset 0 0 40px rgba(0, 0, 0, 0.9);
+    animation: posesion 2.2s forwards;
+}
+
+.modal-caja.ok .slot {
+    border-color: #ff0000;
+    color: #ff2a2a;
+    background: rgba(60, 0, 0, 0.8);
+    text-shadow: 0 0 10px #ff0000;
+    box-shadow: 0 0 14px rgba(255, 0, 0, 0.8);
+}
+
+.modal-caja.ok .estado {
+    color: #ff0000;
+    font-size: 1.5rem;
+    animation: luz-falla 0.9s infinite;
+}
+
+.modal-caja.ok .glitch { animation-duration: 0.8s; }
+
+@keyframes posesion {
+    0%   { transform: translate(0, 0); filter: none; opacity: 1; }
+    8%   { transform: translate(-6px, 2px) skewX(3deg); filter: brightness(0.2); }
+    12%  { transform: translate(5px, -3px) skewX(-3deg); filter: brightness(1.8) saturate(2); }
+    18%  { transform: translate(0, 0); filter: brightness(0.15); }
+    24%  { transform: translate(-4px, 4px); filter: brightness(1.5) saturate(2); }
+    32%  { transform: translate(3px, -2px) skewX(2deg); filter: brightness(0.3); }
+    40%  { transform: translate(0, 0); filter: brightness(1.2); }
+    55%  { transform: translate(-2px, 1px); filter: brightness(0.5); }
+    62%  { transform: translate(2px, -1px); filter: brightness(1.6) saturate(2); }
+    70%  { transform: scale(1.02); filter: brightness(0.8); opacity: 1; }
+    100% { transform: scale(1.25); filter: brightness(0) blur(2px); opacity: 0; }
+}
+
+/* Celular en horizontal: más compacto */
+@media (max-height: 500px) and (orientation: landscape) {
+    .modal-caja { padding: 10px; }
+    .glitch { font-size: 1.4rem; margin-bottom: 14px; }
+    .modal-pista { display: none; }
+    .slot { width: 36px; height: 40px; font-size: 1rem; }
+    .estado { margin: 4px 0 6px; }
+    .teclado-secreto { grid-template-columns: repeat(13, 1fr); gap: 4px; }
+    .teclado-secreto button { min-height: 38px; }
+    .btn-borrar { margin-top: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-secreto, .glitch, .slot.activa, .modal-caja.ok, .modal-caja.ok .estado { animation: none; }
+}
+
+/* ==========================================================
+   Transición de entrada a los niveles (estilo sencillo e infantil)
+   ========================================================== */
+.transicion-nivel {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: center / cover no-repeat;
+}
+
+.transicion-nivel[hidden] { display: none; }
+
+.transicion-caja {
+    width: 100%;
+    max-width: 420px;
+    padding: 24px 16px;
+    text-align: center;
+    background-color: rgba(255, 251, 251, 0.9);
+    border: 3px solid var(--borde, #f7a714);
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+    animation: salto 0.5s ease-out;
+}
+
+.transicion-caja h2 {
+    margin-bottom: 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: var(--titulo, #4d9e01);
+    text-shadow: none;
+}
+
+.transicion-caja p {
+    margin-bottom: 14px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #222;
+}
+
+.puntos { display: flex; justify-content: center; gap: 10px; }
+
+.puntos span {
+    width: 14px;
+    height: 14px;
+    background: var(--borde, #f7a714);
+    border-radius: 50%;
+    animation: rebote 0.6s ease-in-out infinite alternate;
+}
+
+.puntos span:nth-child(2) { animation-delay: 0.15s; }
+.puntos span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes salto { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes rebote { to { transform: translateY(-12px); } }

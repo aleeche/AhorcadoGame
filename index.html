@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="img/logo1.png">
     <link rel="stylesheet" href="styles/styles.css">
+    <!-- Precarga del susto del código secreto para que imagen y sonido salgan a la vez -->
+    <link rel="preload" href="img/celebration.png" as="image">
+    <link rel="preload" href="audio/derrota2.mp3" as="audio">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Press+Start+2P&family=Creepster&family=Special+Elite&display=swap" rel="stylesheet">
 
     <audio id="audio" autoplay loop>
         <source src="audio/indexMusic.mp3" type="audio/mpeg">
@@ -74,8 +77,232 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Solo visible en tablets y celulares (pantallas táctiles) -->
+            <button id="btnSecreto" class="btn-secreto" type="button" aria-label="Abrir código secreto">
+                ? ? ?
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal del código secreto para pantallas táctiles -->
+    <div id="modalSecreto" class="modal-secreto" hidden role="dialog" aria-modal="true" aria-labelledby="tituloSecreto">
+        <div class="modal-caja" id="cajaSecreto">
+            <button id="cerrarSecreto" class="modal-cerrar" type="button" aria-label="Cerrar">✕</button>
+            <h2 id="tituloSecreto" class="glitch" data-text="CÓDIGO SECRETO">CÓDIGO SECRETO</h2>
+            <p class="modal-pista">Lo que susurrarías en la oscuridad cuando todo sale mal…</p>
+            <div id="slotsSecreto" class="slots" aria-label="Contraseña"></div>
+            <p id="estadoSecreto" class="estado" aria-live="polite">&nbsp;</p>
+            <div id="tecladoSecreto" class="teclado-secreto"></div>
+            <button id="borrarSecreto" class="btn-borrar" type="button">⌫ Borrar</button>
+        </div>
+    </div>
+
+    <!-- Transición de entrada a los niveles normales (misma animación del desbloqueo secreto) -->
+    <div id="transicionNivel" class="transicion-nivel" hidden aria-hidden="true">
+        <div class="transicion-caja" id="cajaTransicion">
+            <h2 id="tituloTransicion">NIVEL</h2>
+            <p>¡Prepárate!</p>
+            <div class="puntos"><span></span><span></span><span></span></div>
         </div>
     </div>
     <footer class="pie"></footer>
+
+    <script>
+        (function () {
+            const overlay = document.getElementById("transicionNivel");
+            const caja = document.getElementById("cajaTransicion");
+            const titulo = document.getElementById("tituloTransicion");
+            // Fondo y colores de cada nivel, iguales a los de sus páginas.
+            const temas = {
+                facil:   { img: "img/campoDos.jpg",  titulo: "#4d9e01", borde: "#f7a714" },
+                medio:   { img: "img/cielo2.jpg",    titulo: "#1d74d8", borde: "#01a4d9" },
+                dificil: { img: "img/espacio2.jpg",  titulo: "#4146da", borde: "#9e29d5" }
+            };
+            const reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            let yendo = false;
+
+            document.querySelectorAll(".item-informacion a").forEach((a) => {
+                a.addEventListener("click", (e) => {
+                    if (reducir) return; // sin animación, navegación normal
+                    e.preventDefault();
+                    if (yendo) return;
+                    yendo = true;
+
+                    const nombre = a.querySelector("button").textContent.trim().toUpperCase();
+                    const clave = a.getAttribute("href").match(/nivel_(\w+)\.html/)[1];
+                    titulo.textContent = nombre;
+                    const tema = temas[clave];
+                    overlay.style.backgroundImage = `url('${tema.img}')`;
+                    caja.style.setProperty("--titulo", tema.titulo);
+                    caja.style.setProperty("--borde", tema.borde);
+
+                    overlay.hidden = false;
+                    document.body.style.overflow = "hidden";
+                    if (navigator.vibrate) navigator.vibrate([60, 30, 120]);
+                    setTimeout(() => { window.location.href = a.href; }, 1200);
+                });
+            });
+
+            // Al volver con el botón "atrás" la página puede quedar en caché con la transición activa.
+            window.addEventListener("pageshow", () => {
+                yendo = false;
+                overlay.hidden = true;
+                document.body.style.overflow = "";
+            });
+        })();
+    </script>
+
+    <script>
+        // ---- Código secreto con teclado en pantalla (tablets y celulares) ----
+        (function () {
+            const modal = document.getElementById("modalSecreto");
+            const caja = document.getElementById("cajaSecreto");
+            const slotsDiv = document.getElementById("slotsSecreto");
+            const tecladoDiv = document.getElementById("tecladoSecreto");
+            const estado = document.getElementById("estadoSecreto");
+            let entrada = [];
+            let bloqueado = false;
+            let sonidoError = null;
+            let fallos = 0;
+            const MAX_FALLOS = 3;
+            // Precarga: la imagen se descarga y decodifica desde que carga el menú.
+            const imgSusto = new Image();
+            imgSusto.src = "img/celebration.png";
+            if (imgSusto.decode) imgSusto.decode().catch(() => {});
+            const sonidoSusto = new Audio("audio/derrota2.mp3");
+            sonidoSusto.preload = "auto";
+            sonidoSusto.load();
+            let audioListo = false;
+
+            // Los navegadores móviles solo dejan reproducir audio tras un toque del usuario:
+            // al abrir el modal "calentamos" el sonido en silencio para que luego suene al instante.
+            function prepararAudio() {
+                if (audioListo) return;
+                audioListo = true;
+                sonidoSusto.muted = true;
+                const p = sonidoSusto.play();
+                const listo = () => { sonidoSusto.pause(); sonidoSusto.currentTime = 0; sonidoSusto.muted = false; };
+                if (p && p.then) p.then(listo).catch(() => { sonidoSusto.muted = false; audioListo = false; });
+                else listo();
+            }
+
+            // Susto del nivel secreto: imagen a pantalla completa + sonido de derrota.
+            function susto() {
+                const overlay = document.createElement("div");
+                // Aparece y desaparece de golpe (sin transición), como en el nivel secreto.
+                overlay.style.cssText = "position:fixed;inset:0;z-index:9999;background:url('img/celebration.png') center/cover;";
+                document.body.appendChild(overlay);
+                // Primero la imagen; el sonido arranca en el siguiente fotograma, ya pintada.
+                requestAnimationFrame(() => {
+                    sonidoSusto.currentTime = 0;
+                    sonidoSusto.play().catch(() => {});
+                    vibrar([300, 100, 300, 100, 500]);
+                });
+                setTimeout(() => overlay.remove(), 2000);
+            }
+
+            const vibrar = (p) => { if (navigator.vibrate) navigator.vibrate(p); };
+
+            // Una casilla por letra del código (reutiliza secretCode de arriba).
+            secretCode.forEach(() => {
+                const s = document.createElement("div");
+                s.className = "slot";
+                slotsDiv.appendChild(s);
+            });
+            const slots = slotsDiv.children;
+
+            // Teclado A–Z generado dinámicamente, igual que en los niveles.
+            for (const letra of "ABCDEFGHIJKLMNOPQRSTUVWXYZ") {
+                const b = document.createElement("button");
+                b.type = "button";
+                b.textContent = letra;
+                b.addEventListener("click", () => pulsar(letra.toLowerCase()));
+                tecladoDiv.appendChild(b);
+            }
+
+            function pintar() {
+                for (let i = 0; i < slots.length; i++) {
+                    slots[i].textContent = entrada[i] ? entrada[i].toUpperCase() : "";
+                    slots[i].classList.toggle("llena", !!entrada[i]);
+                    slots[i].classList.toggle("activa", i === entrada.length && !bloqueado);
+                }
+            }
+
+            function abrir() {
+                entrada = []; bloqueado = false; fallos = 0;
+                caja.classList.remove("ok", "error");
+                estado.innerHTML = "&nbsp;";
+                pintar();
+                modal.hidden = false;
+                document.body.style.overflow = "hidden";
+                prepararAudio();
+                vibrar(20);
+            }
+
+            function cerrar() {
+                if (bloqueado && caja.classList.contains("ok")) return; // ya está entrando
+                modal.hidden = true;
+                document.body.style.overflow = "";
+            }
+
+            function pulsar(letra) {
+                if (bloqueado || entrada.length >= secretCode.length) return;
+                entrada.push(letra);
+                vibrar(10);
+                pintar();
+                if (entrada.length === secretCode.length) {
+                    bloqueado = true;
+                    pintar();
+                    setTimeout(verificar, 300);
+                }
+            }
+
+            function borrar() {
+                if (bloqueado) return;
+                entrada.pop();
+                vibrar(8);
+                pintar();
+            }
+
+            function verificar() {
+                if (entrada.join("") === secretCode.join("")) {
+                    caja.classList.add("ok");
+                    estado.textContent = "ACCESO CONCEDIDO";
+                    vibrar([80, 40, 80, 40, 200, 100, 400]);
+                    setTimeout(() => { estado.textContent = "TE ESTÁBAMOS ESPERANDO…"; }, 900);
+                    setTimeout(() => { window.location.href = "niveles/nivel_secreto.html"; }, 2300);
+                } else {
+                    caja.classList.add("error");
+                    estado.textContent = "ACCESO DENEGADO";
+                    vibrar([200, 60, 200]);
+                    fallos++;
+                    const fueSusto = fallos >= MAX_FALLOS;
+                    if (fueSusto) {
+                        fallos = 0;
+                        susto();
+                    } else {
+                        try {
+                            sonidoError = sonidoError || new Audio("audio/error2.mp3");
+                            sonidoError.currentTime = 0;
+                            sonidoError.play().catch(() => {});
+                        } catch (e) {}
+                    }
+                    setTimeout(() => {
+                        caja.classList.remove("error");
+                        entrada = []; bloqueado = false;
+                        estado.innerHTML = "&nbsp;";
+                        pintar();
+                    }, fueSusto ? 2100 : 900);
+                }
+            }
+
+            document.getElementById("btnSecreto").addEventListener("click", abrir);
+            document.getElementById("cerrarSecreto").addEventListener("click", cerrar);
+            document.getElementById("borrarSecreto").addEventListener("click", borrar);
+            modal.addEventListener("click", (e) => { if (e.target === modal) cerrar(); });
+            document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) cerrar(); });
+        })();
+    </script>
 </body>
 </html>

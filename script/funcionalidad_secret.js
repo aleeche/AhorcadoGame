@@ -14,6 +14,8 @@ let totalIntentos = 0;     // contador de intentos totales (aciertos + fallos)
    canvas, palabra, teclado, letras usadas, input, botones y mensajes. */
 const canvas = document.getElementById("personCanvas");
 const ctx = canvas.getContext("2d");
+ctx.strokeStyle = "#ff7b7b"; // trazo claro sobre el fondo oscuro del nivel
+ctx.lineWidth = 2;
 
 const wordContainer = document.getElementById("wordContainer");
 const keyboardDiv = document.getElementById("keyboard");
@@ -24,7 +26,12 @@ const restartButton = document.getElementById("restartButton");
 const messageDiv = document.getElementById("message");
 
 // Sonidos propios del nivel secreto (derrota y fallo con variantes distintas).
+// Precarga del susto: la imagen se descarga y decodifica desde el inicio del nivel.
+const imgSusto = new Image();
+imgSusto.src = "../img/celebration.png";
+if (imgSusto.decode) imgSusto.decode().catch(() => {});
 const sonidoDerrota = new Audio("../audio/derrota2.mp3");
+sonidoDerrota.preload = "auto";
 const sonidoFallo = new Audio("../audio/error2.mp3");
 // =------------------------------ FUNCIONES ------------------------------
 
@@ -44,7 +51,6 @@ document.addEventListener('keydown', (e) => {
    A diferencia del juego normal, aquí no hay confeti: se muestra una imagen
    a pantalla completa junto al sonido de derrota, creando un efecto de susto. */
 function createCelebration() {
-    sonidoDerrota.play();
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
     overlay.style.top = '0';
@@ -55,15 +61,15 @@ function createCelebration() {
     overlay.style.backgroundSize = 'cover';   // que cubra toda la pantalla
     overlay.style.backgroundPosition = 'center';
     overlay.style.zIndex = '9999';
-    overlay.style.opacity = '0';
+    overlay.style.opacity = '1'; // aparece de golpe
 
-    // Agregar al body
+    // Primero la imagen; el sonido arranca en el siguiente fotograma, ya pintada.
     document.body.appendChild(overlay);
+    requestAnimationFrame(() => {
+        sonidoDerrota.currentTime = 0;
+        sonidoDerrota.play();
+    });
 
-    // Activar la transición de opacidad para que aparezca gradualmente.
-    setTimeout(() => {
-        overlay.style.opacity = '1';
-    }, 50);
     // Desvanecer y remover la imagen después de unos segundos.
     setTimeout(() => {
         overlay.style.opacity = '0';
